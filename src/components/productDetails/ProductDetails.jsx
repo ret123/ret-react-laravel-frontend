@@ -1,17 +1,99 @@
 import React, { Component, Fragment } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import ReactDOM from "react-dom";
+
+import "react-inner-image-zoom/lib/InnerImageZoom/styles.css";
+import InnerImageZoom from "react-inner-image-zoom";
+import SuggestedProduct from "./SuggestedProduct";
+import axios from "axios";
+import cogoToast from "cogo-toast";
+import AppUrl from "../../api/AppUrl";
 
 class ProductDetails extends Component {
   constructor() {
     super();
+    this.state = {
+      previewImg: "0",
+      reviews: [],
+      isSize: null,
+      isColor: null,
+      color: "no",
+      size: "no",
+      quantity: "",
+      productCode: null,
+      email: "",
+      count: 0,
+    };
   }
 
-  imgClick(e) {
-    let imgsrc = e.target.getAttribute("src");
-    let previewImg = document.getElementById("preview_image");
-    ReactDOM.findDOMNode(previewImg).setAttribute("src", imgsrc);
+  componentDidMount() {
+    axios
+      .get(AppUrl.Review(this.props.product["product"][0]["id"]))
+      .then((res) => {
+        this.setState({ reviews: res.data });
+      });
   }
+
+  addToCart = () => {
+    let isSize = this.state.isSize;
+    let isColor = this.state.isColor;
+    let color = this.state.color;
+    let size = this.state.size;
+    let quantity = this.state.quantity;
+    let product_code = this.state.productCode;
+
+    if (isColor === "YES" && color.length === 0) {
+      cogoToast.error("Please Select Color", { position: "top-right" });
+    } else if (isSize === "YES" && size.length === 0) {
+      cogoToast.error("Please Select Size", { position: "top-right" });
+    } else if (quantity.length === 0) {
+      cogoToast.error("Please Select Quantity", { position: "top-right" });
+    } else if (!localStorage.getItem("token")) {
+      cogoToast.warn("Login To Continue.", {
+        position: "top-right",
+      });
+    } else {
+      let formData = new FormData();
+      formData.append("color", color);
+      formData.append("size", size);
+      formData.append("quantity", quantity);
+      formData.append("email", this.props.user.email);
+      formData.append("product_code", product_code);
+      axios.post(AppUrl.AddToCart, formData).then((res) => {
+        if (res.data === 1) {
+          const cartCount = this.state.count + 1;
+          this.props.setCart(cartCount);
+          cogoToast.success("Product added successfully.", {
+            position: "top-right",
+          });
+        } else {
+          cogoToast.error("Error adding product. Please try again.", {
+            position: "top-right",
+          });
+        }
+      });
+    }
+  };
+
+  imgClick = (e) => {
+    let imgsrc = e.target.getAttribute("src");
+    // let previewImg = document.getElementById("preview_image");
+    // ReactDOM.findDOMNode(previewImg).setAttribute("src", imgsrc);
+    this.setState({ previewImg: imgsrc });
+  };
+
+  colorOnChange = (e) => {
+    let color = e.target.value;
+    this.setState({ color: color });
+  };
+  sizeOnChange = (e) => {
+    let size = e.target.value;
+    this.setState({ size: size });
+  };
+
+  quantityOnChange = (e) => {
+    let quantity = e.target.value;
+    this.setState({ quantity: quantity });
+  };
 
   priceOption(price, special_price) {
     if (special_price == "no") {
@@ -41,6 +123,9 @@ class ProductDetails extends Component {
     let img2 = productData["product_details"][0]["image2"];
     let img3 = productData["product_details"][0]["image3"];
     let img4 = productData["product_details"][0]["image4"];
+    if (this.state.previewImg === "0") {
+      this.setState({ previewImg: img1 });
+    }
     let short_description =
       productData["product_details"][0]["short_description"];
     let long_description =
@@ -70,6 +155,95 @@ class ProductDetails extends Component {
       sizeDiv = "d-none";
     }
 
+    if (this.state.isSize === null) {
+      if (size != "no") {
+        this.setState({ isSize: "YES" });
+      } else {
+        this.setState({ isSize: "NO" });
+      }
+    }
+    if (this.state.isColor === null) {
+      if (color != "no") {
+        this.setState({ isColor: "YES" });
+      } else {
+        this.setState({ isColor: "NO" });
+      }
+    }
+
+    if (this.state.productCode === null) {
+      this.setState({ productCode: product_code });
+    }
+
+    const reviewView = this.state.reviews.map((review) => {
+      if (review.reviewer_rating === "1") {
+        return (
+          <div>
+            <p className=" p-0 m-0">
+              <span className="Review-Title">{review.reviewer_name}</span>
+              <span className="text-success">
+                <i className="fa fa-star"></i>
+              </span>
+            </p>
+            <p>{review.reviewer_comments}</p>
+          </div>
+        );
+      } else if (review.reviewer_rating === "2") {
+        return (
+          <div>
+            <p className=" p-0 m-0">
+              <span className="Review-Title">{review.reviewer_name}</span>
+              <span className="text-success">
+                <i className="fa fa-star"></i> <i className="fa fa-star"></i>
+              </span>
+            </p>
+            <p>{review.reviewer_comments}</p>
+          </div>
+        );
+      } else if (review.reviewer_rating === "3") {
+        return (
+          <div>
+            <p className=" p-0 m-0">
+              <span className="Review-Title">{review.reviewer_name}</span>
+              <span className="text-success">
+                <i className="fa fa-star"></i> <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+              </span>
+            </p>
+            <p>{review.reviewer_comments}</p>
+          </div>
+        );
+      } else if (review.reviewer_rating === "4") {
+        return (
+          <div>
+            <p className=" p-0 m-0">
+              <span className="Review-Title">{review.reviewer_name}</span>
+              <span className="text-success">
+                <i className="fa fa-star"></i> <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+              </span>
+            </p>
+            <p>{review.reviewer_comments}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <p className=" p-0 m-0">
+              <span className="Review-Title">{review.reviewer_name}</span>
+              <span className="text-success">
+                <i className="fa fa-star"></i> <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+                <i className="fa fa-star"></i>
+              </span>
+            </p>
+            <p>{review.reviewer_comments}</p>
+          </div>
+        );
+      }
+    });
+
     return (
       <Fragment>
         <Container fluid={true} className="BetweenTwoSection">
@@ -83,11 +257,20 @@ class ProductDetails extends Component {
             >
               <Row>
                 <Col className="p-3" md={6} lg={6} sm={12} xs={12}>
-                  <img
+                  {/* <img
                     id="preview_image"
                     className="w-100 bigimage"
                     src={img1}
+                  /> */}
+
+                  <InnerImageZoom
+                    className="detailimage"
+                    src={this.state.previewImg}
+                    zoomSrc={this.state.previewImg}
+                    zoomScale={1.8}
+                    zoomType={"hover"}
                   />
+
                   <Container className="my-4">
                     <Row>
                       <Col className="p-0 m-0" md={3} lg={3} sm={3} xs={3}>
@@ -144,38 +327,44 @@ class ProductDetails extends Component {
                   </h6>
                   <div className={colorDiv}>
                     <h6 className="mt-2">Choose Color</h6>
-                    <select className="form-control form-select">
+                    <select
+                      onChange={this.colorOnChange}
+                      className="form-control form-select"
+                    >
                       <option>Choose Color</option>
                       {colorOption}
                     </select>
                   </div>
-
-                  <div className="input-group"></div>
-
-                  <div className={sizeDiv}>
-                    <h6 className="mt-2">Choose Size</h6>
-                    <select className="form-control form-select">
-                      <option>Choose Size</option>
-                      {sizeOption}
-                    </select>
+                  <div className="input-group">
+                    <div className={sizeDiv}>
+                      <h6 className="mt-2">Choose Size</h6>
+                      <select
+                        onChange={this.sizeOnChange}
+                        className="form-control form-select"
+                      >
+                        <option>Choose Size</option>
+                        {sizeOption}
+                      </select>
+                    </div>
                   </div>
 
                   <h6 className="mt-2">Quantity</h6>
                   <input
                     className="form-control text-center w-50"
                     type="number"
+                    onChange={this.quantityOnChange}
                   />
                   <div className="input-group mt-3">
-                    <button className="btn site-btn m-1 ">
-                      {" "}
+                    <button
+                      onClick={this.addToCart}
+                      className="btn site-btn m-1 "
+                    >
                       <i className="fa fa-shopping-cart"></i> Add To Cart
                     </button>
                     <button className="btn btn-primary m-1">
-                      {" "}
                       <i className="fa fa-car"></i> Order Now
                     </button>
                     <button className="btn btn-primary m-1">
-                      {" "}
                       <i className="fa fa-heart"></i> Favourite
                     </button>
                   </div>
@@ -205,53 +394,13 @@ class ProductDetails extends Component {
                 </Col>
                 <Col className="" md={6} lg={6} sm={12} xs={12}>
                   <h6 className="mt-2">REVIEWS</h6>
-                  <p className=" p-0 m-0">
-                    <span className="Review-Title">User2</span>{" "}
-                    <span className="text-success">
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                    </span>{" "}
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore
-                    magna aliquam erat volutpat.
-                  </p>
-                  <p className=" p-0 m-0">
-                    <span className="Review-Title">User3</span>{" "}
-                    <span className="text-success">
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                    </span>{" "}
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore
-                    magna aliquam erat volutpat.
-                  </p>
-                  <p className=" p-0 m-0">
-                    <span className="Review-Title">User4</span>{" "}
-                    <span className="text-success">
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                      <i className="fa fa-star"></i>{" "}
-                    </span>{" "}
-                  </p>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore
-                    magna aliquam erat volutpat.
-                  </p>
+                  {reviewView}
                 </Col>
               </Row>
             </Col>
           </Row>
         </Container>
+        <SuggestedProduct subcategory={subcategory} />
       </Fragment>
     );
   }

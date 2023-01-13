@@ -1,23 +1,49 @@
+import axios from "axios";
 import React, { Component, Fragment } from "react";
 import { Switch, Router, Route } from "react-router";
+import AppUrl from "../api/AppUrl";
+import NavMenuDesktop from "../components/common/NavMenuDesktop";
 import CartPage from "../pages/CartPage";
 import ContactPage from "../pages/ContactPage";
 import FavouritePage from "../pages/FavouritePage";
+import ForgetPasswordPage from "../pages/ForgetPasswordPage";
 import HomePage from "../pages/HomePage";
 import NotificationPage from "../pages/NotificationPage";
 import PrivacyPage from "../pages/PrivacyPage";
 import ProductCategoryPage from "../pages/ProductCategoryPage";
 import ProductDetailPage from "../pages/ProductDetailPage";
 import ProductSubcategoryPage from "../pages/ProductSubcategoryPage";
+import ProfilePage from "../pages/ProfilePage";
 import PurchasePage from "../pages/PurchasePage";
+import RegisterPage from "../pages/RegisterPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import ReturnPage from "../pages/ReturnPage";
 import SearchPage from "../pages/SearchPage";
 import UserLoginPage from "../pages/UserLoginPage";
 
 export class AppRoute extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      user: {},
+    };
+  }
+
+  componentDidMount() {
+    axios.get(AppUrl.User).then((res) => {
+      this.setUser(res.data);
+    });
+  }
+
+  setUser = (user) => {
+    this.setState({ user: user });
+  };
+
   render() {
     return (
       <Fragment>
+        <NavMenuDesktop user={this.state.user} setUser={this.setUser} />
         <Switch>
           <Route
             exact
@@ -27,7 +53,52 @@ export class AppRoute extends Component {
           <Route
             exact
             path="/login"
-            render={(props) => <UserLoginPage {...props} key={Date.now()} />}
+            render={(props) => (
+              <UserLoginPage
+                user={this.state.user}
+                setUser={this.setUser}
+                {...props}
+                key={Date.now()}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/register"
+            render={(props) => (
+              <RegisterPage
+                user={this.state.user}
+                setUser={this.setUser}
+                {...props}
+                key={Date.now()}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/forget"
+            render={(props) => (
+              <ForgetPasswordPage {...props} key={Date.now()} />
+            )}
+          />
+          <Route
+            exact
+            path="/reset"
+            render={(props) => (
+              <ResetPasswordPage {...props} key={Date.now()} />
+            )}
+          />
+          <Route
+            exact
+            path="/profile"
+            render={(props) => (
+              <ProfilePage
+                user={this.state.user}
+                setUser={this.setUser}
+                {...props}
+                key={Date.now()}
+              />
+            )}
           />
           <Route
             exact
@@ -53,7 +124,11 @@ export class AppRoute extends Component {
             exact
             path="/productdetails/:id"
             render={(props) => (
-              <ProductDetailPage {...props} key={Date.now()} />
+              <ProductDetailPage
+                user={this.state.user}
+                {...props}
+                key={Date.now()}
+              />
             )}
           />
           <Route

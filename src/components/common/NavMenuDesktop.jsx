@@ -19,6 +19,11 @@ export class NavMenuDesktop extends Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.redirectSearch = this.redirectSearch.bind(this);
   }
+
+  componentDidMount() {
+    console.log(this.props.count);
+  }
+
   menuClick = () => {
     this.sideNavToggle();
   };
@@ -43,6 +48,10 @@ export class NavMenuDesktop extends Component {
     }
   };
 
+  logout = () => {
+    localStorage.clear();
+  };
+
   handleChange(e) {
     const searchKey = e.target.value;
 
@@ -62,6 +71,62 @@ export class NavMenuDesktop extends Component {
   }
 
   render() {
+    let view;
+    if (localStorage.getItem("token")) {
+      view = (
+        <div>
+          <Link to="/cart" className="cart-btn">
+            <i className="fa fa-shopping-cart"></i> 3 Items
+          </Link>
+          <Link to="/notification" className="btn">
+            <i className="fa h4 fa-bell"></i>
+            <sup>
+              <span className="badge text-white bg-danger">5</span>
+            </sup>
+          </Link>
+          <Link to="/favourite">
+            <i className="fa h4 fa-heart"></i>
+            <sup>
+              <span className="badge text-white bg-danger">3</span>
+            </sup>
+          </Link>
+
+          <Link to="/profile" className="h4 btn">
+            Profile
+          </Link>
+          <Link to="/" onClick={this.logout} className="h4 btn">
+            Logout
+          </Link>
+        </div>
+      );
+    } else {
+      view = (
+        <div>
+          <Link to="/cart" className="cart-btn">
+            <i className="fa fa-shopping-cart"></i> 3 Items
+          </Link>
+          <Link to="/notification" className="btn">
+            <i className="fa h4 fa-bell"></i>
+            <sup>
+              <span className="badge text-white bg-danger">5</span>
+            </sup>
+          </Link>
+          <Link to="/favourite">
+            <i className="fa h4 fa-heart"></i>
+            <sup>
+              <span className="badge text-white bg-danger">3</span>
+            </sup>
+          </Link>
+
+          <Link to="/login" className="h4 btn">
+            Login
+          </Link>
+          <Link to="/register" className="h4 btn">
+            Register
+          </Link>
+        </div>
+      );
+    }
     return (
       <Fragment>
         <Navbar fixed={"top"} bg="light" className="navbar">
@@ -99,27 +164,7 @@ export class NavMenuDesktop extends Component {
                 xs={12}
                 className="d-flex flex-row-reverse align-items-center"
               >
-                <Link to="/cart" className="cart-btn">
-                  <i className="fa fa-shopping-cart"></i> 3 Items
-                </Link>
-                <Link to="/notification" className="btn">
-                  <i className="fa h4 fa-bell"></i>
-                  <sup>
-                    <span className="badge text-white bg-danger">5</span>
-                  </sup>
-                </Link>
-                <Link to="/favourite">
-                  <i className="fa h4 fa-heart"></i>
-                  <sup>
-                    <span className="badge text-white bg-danger">3</span>
-                  </sup>
-                </Link>
-                <a href="" className="btn">
-                  <i className="fa h4 fa-mobile-alt"></i>
-                </a>
-                <Link to="/login" className="h4 btn">
-                  Login
-                </Link>
+                {view}
               </Col>
             </Row>
             {this.redirectSearch()}

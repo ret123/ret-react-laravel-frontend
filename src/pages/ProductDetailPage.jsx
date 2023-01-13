@@ -5,7 +5,7 @@ import NavMenuMobile from "../components/common/NavMenuMobile";
 import FooterDesktop from "../components/common/FooterDesktop";
 import FooterMobile from "../components/common/FooterMobile";
 import ProductDetails from "../components/productDetails/ProductDetails";
-import SuggestedProduct from "../components/productDetails/SuggestedProduct";
+
 import SliderLoader from "../components/placeholder/SliderLoader";
 import AppUrl from "../api/AppUrl";
 import axios from "axios";
@@ -18,6 +18,7 @@ export class ProductDetailPage extends Component {
       product: [],
       isLoading: "",
       mainDiv: "d-none",
+      count: 0,
     };
   }
   componentDidMount() {
@@ -26,12 +27,17 @@ export class ProductDetailPage extends Component {
       this.setState({ product: res.data, isLoading: "d-none", mainDiv: "" });
     });
   }
+
+  setCart = (count) => {
+    this.setState({ count: count });
+  };
   render() {
+    const user = this.props.user;
     if (this.state.mainDiv == "d-none") {
       return (
         <Fragment>
           <div className="Desktop">
-            <NavMenuDesktop />
+            <NavMenuDesktop count={this.state.count} />
           </div>
           <div className="Mobile">
             <NavMenuMobile />
@@ -49,13 +55,17 @@ export class ProductDetailPage extends Component {
       return (
         <Fragment>
           <div className="Desktop">
-            <NavMenuDesktop />
+            <NavMenuDesktop count={this.state.count} />
           </div>
           <div className="Mobile">
             <NavMenuMobile />
           </div>
-          <ProductDetails product={this.state.product} />
-          <SuggestedProduct />
+          <ProductDetails
+            product={this.state.product}
+            user={user}
+            setCart={this.setCart}
+          />
+
           <div className="Desktop">
             <FooterDesktop />
           </div>

@@ -4,9 +4,9 @@ import NavMenuMobile from "../components/common/NavMenuMobile";
 
 import FooterDesktop from "../components/common/FooterDesktop";
 import FooterMobile from "../components/common/FooterMobile";
-import UserLogin from "../components/common/UserLogin";
+import Register from "../components/common/Register";
 
-export class UserLoginPage extends Component {
+export class RegisterPage extends Component {
   componentDidMount() {
     window.scroll(0, 0);
   }
@@ -21,7 +21,7 @@ export class UserLoginPage extends Component {
         <div className="Mobile">
           <NavMenuMobile />
         </div>
-        <UserLogin user={user} setUser={setUser} />
+        <Register user={user} setUser={setUser} />
 
         <div className="Desktop">
           <FooterDesktop />
@@ -34,4 +34,4 @@ export class UserLoginPage extends Component {
   }
 }
 
-export default UserLoginPage;
+export default RegisterPage;

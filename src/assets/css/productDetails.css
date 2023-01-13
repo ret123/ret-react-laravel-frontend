@@ -23,6 +23,13 @@
 }
 .smallimage {
   height: 100px;
+  cursor: pointer;
+}
+.detailimage {
+  max-width: 60%;
+  height: 499px;
+  margin: 0px;
+  margin-left: 142px;
 }
 .product-sm-img {
 }

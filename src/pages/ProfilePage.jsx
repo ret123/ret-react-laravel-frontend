@@ -4,14 +4,13 @@ import NavMenuMobile from "../components/common/NavMenuMobile";
 
 import FooterDesktop from "../components/common/FooterDesktop";
 import FooterMobile from "../components/common/FooterMobile";
-import UserLogin from "../components/common/UserLogin";
+import Profile from "../components/common/Profile";
 
-export class UserLoginPage extends Component {
+export class ProfilePage extends Component {
   componentDidMount() {
     window.scroll(0, 0);
   }
   render() {
-    const setUser = this.props.setUser;
     const user = this.props.user;
     return (
       <Fragment>
@@ -21,7 +20,7 @@ export class UserLoginPage extends Component {
         <div className="Mobile">
           <NavMenuMobile />
         </div>
-        <UserLogin user={user} setUser={setUser} />
+        <Profile user={user} />
 
         <div className="Desktop">
           <FooterDesktop />
@@ -34,4 +33,4 @@ export class UserLoginPage extends Component {
   }
 }
 
-export default UserLoginPage;
+export default ProfilePage;

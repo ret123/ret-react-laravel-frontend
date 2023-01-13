@@ -33,7 +33,7 @@ export class Categories extends Component {
 
     const categoryView = categoryList.map((category, i) => {
       return (
-        <Col className="p-0" xl={2} lg={2} md={3} sm={6} xs={6}>
+        <Col className="p-0" xl={2} lg={2} md={3} sm={6} xs={6} key={i}>
           <Card className="h-100 w-100 text-center">
             <Card.Body>
               <Link to={"/productcategory/" + category.category_name}>

@@ -28,6 +28,26 @@ class AppUrl {
   static Search(key) {
     return this.BaseUrl + "/search/" + key;
   }
+
+  static Similar(key) {
+    return this.BaseUrl + "/similar/" + key;
+  }
+
+  static Review(id) {
+    return this.BaseUrl + "/review/" + id;
+  }
+
+  static Login = this.BaseUrl + "/login";
+
+  static User = this.BaseUrl + "/user";
+
+  static Register = this.BaseUrl + "/register";
+
+  static ForgetPassword = this.BaseUrl + "/forget";
+
+  static ResetPassword = this.BaseUrl + "/reset";
+
+  static AddToCart = this.BaseUrl + "/addtocart";
 }
 
 export default AppUrl;
