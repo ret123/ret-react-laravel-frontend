@@ -7,6 +7,7 @@ import SuggestedProduct from "./SuggestedProduct";
 import axios from "axios";
 import cogoToast from "cogo-toast";
 import AppUrl from "../../api/AppUrl";
+import { Redirect } from "react-router";
 
 class ProductDetails extends Component {
   constructor() {
@@ -22,6 +23,7 @@ class ProductDetails extends Component {
       productCode: null,
       email: "",
       count: 0,
+      pageRefresh: false,
     };
   }
 
@@ -60,17 +62,46 @@ class ProductDetails extends Component {
       formData.append("product_code", product_code);
       axios.post(AppUrl.AddToCart, formData).then((res) => {
         if (res.data === 1) {
-          const cartCount = this.state.count + 1;
-          this.props.setCart(cartCount);
           cogoToast.success("Product added successfully.", {
             position: "top-right",
           });
+          this.setState({ pageRefresh: true });
         } else {
           cogoToast.error("Error adding product. Please try again.", {
             position: "top-right",
           });
         }
       });
+    }
+  };
+
+  addToFav = () => {
+    let product_code = this.state.productCode;
+    let email = this.props.user.email;
+    if (!localStorage.getItem("token")) {
+      cogoToast.warn("Login To Continue.", {
+        position: "top-right",
+      });
+    } else {
+      axios.post(AppUrl.AddFavourite(product_code, email)).then((res) => {
+        if (res.data === 1) {
+          cogoToast.success("Product added to Favourite.", {
+            position: "top-right",
+          });
+          this.setState({ pageRefresh: true });
+        } else {
+          cogoToast.error("Error adding product. Please try again.", {
+            position: "top-right",
+          });
+        }
+      });
+    }
+  };
+
+  refreshPage = () => {
+    if (this.state.pageRefresh === true) {
+      let url = window.location;
+      return <Redirect to={url} />;
     }
   };
 
@@ -364,7 +395,10 @@ class ProductDetails extends Component {
                     <button className="btn btn-primary m-1">
                       <i className="fa fa-car"></i> Order Now
                     </button>
-                    <button className="btn btn-primary m-1">
+                    <button
+                      onClick={this.addToFav}
+                      className="btn btn-primary m-1"
+                    >
                       <i className="fa fa-heart"></i> Favourite
                     </button>
                   </div>
@@ -401,6 +435,7 @@ class ProductDetails extends Component {
           </Row>
         </Container>
         <SuggestedProduct subcategory={subcategory} />
+        {this.refreshPage()}
       </Fragment>
     );
   }

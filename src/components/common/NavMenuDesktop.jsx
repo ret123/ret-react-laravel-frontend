@@ -5,6 +5,8 @@ import Logo from "../../assets/images/easyshop.png";
 import Bars from "../../assets/images/bars.png";
 
 import MegaMenuAll from "../home/MegaMenuAll";
+import axios from "axios";
+import AppUrl from "../../api/AppUrl";
 
 export class NavMenuDesktop extends Component {
   constructor() {
@@ -14,6 +16,8 @@ export class NavMenuDesktop extends Component {
       contentOverlayState: "ContentOverlayClose",
       searchKey: "",
       showSearchResult: false,
+      cartCount: 0,
+      favCount: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
@@ -21,7 +25,19 @@ export class NavMenuDesktop extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.count);
+    if (localStorage.getItem("token")) {
+      let email = this.props.user.email;
+
+      axios.get(AppUrl.CartCount(email)).then((res) => {
+        this.setState({ cartCount: res.data });
+      });
+
+      axios.get(AppUrl.FavoutriteList(email)).then((res) => {
+        this.setState({
+          favCount: res.data.count,
+        });
+      });
+    }
   }
 
   menuClick = () => {
@@ -76,7 +92,7 @@ export class NavMenuDesktop extends Component {
       view = (
         <div>
           <Link to="/cart" className="cart-btn">
-            <i className="fa fa-shopping-cart"></i> 3 Items
+            <i className="fa fa-shopping-cart"></i> {this.state.cartCount} Items
           </Link>
           <Link to="/notification" className="btn">
             <i className="fa h4 fa-bell"></i>
@@ -87,7 +103,9 @@ export class NavMenuDesktop extends Component {
           <Link to="/favourite">
             <i className="fa h4 fa-heart"></i>
             <sup>
-              <span className="badge text-white bg-danger">3</span>
+              <span className="badge text-white bg-danger">
+                {this.state.favCount}
+              </span>
             </sup>
           </Link>
 
@@ -103,7 +121,7 @@ export class NavMenuDesktop extends Component {
       view = (
         <div>
           <Link to="/cart" className="cart-btn">
-            <i className="fa fa-shopping-cart"></i> 3 Items
+            <i className="fa fa-shopping-cart"></i> 0 Items
           </Link>
           <Link to="/notification" className="btn">
             <i className="fa h4 fa-bell"></i>
@@ -114,7 +132,7 @@ export class NavMenuDesktop extends Component {
           <Link to="/favourite">
             <i className="fa h4 fa-heart"></i>
             <sup>
-              <span className="badge text-white bg-danger">3</span>
+              <span className="badge text-white bg-danger">0</span>
             </sup>
           </Link>
 

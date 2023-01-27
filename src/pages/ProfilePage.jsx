@@ -15,7 +15,7 @@ export class ProfilePage extends Component {
     return (
       <Fragment>
         <div className="Desktop">
-          <NavMenuDesktop />
+          <NavMenuDesktop user={user} />
         </div>
         <div className="Mobile">
           <NavMenuMobile />

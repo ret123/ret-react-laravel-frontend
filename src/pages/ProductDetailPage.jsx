@@ -18,7 +18,7 @@ export class ProductDetailPage extends Component {
       product: [],
       isLoading: "",
       mainDiv: "d-none",
-      count: 0,
+      // count: 0,
     };
   }
   componentDidMount() {
@@ -28,16 +28,16 @@ export class ProductDetailPage extends Component {
     });
   }
 
-  setCart = (count) => {
-    this.setState({ count: count });
-  };
+  // setCart = (count) => {
+  //   this.setState({ count: count });
+  // };
   render() {
     const user = this.props.user;
     if (this.state.mainDiv == "d-none") {
       return (
         <Fragment>
           <div className="Desktop">
-            <NavMenuDesktop count={this.state.count} />
+            <NavMenuDesktop user={user} />
           </div>
           <div className="Mobile">
             <NavMenuMobile />
@@ -55,7 +55,7 @@ export class ProductDetailPage extends Component {
       return (
         <Fragment>
           <div className="Desktop">
-            <NavMenuDesktop count={this.state.count} />
+            <NavMenuDesktop user={user} />
           </div>
           <div className="Mobile">
             <NavMenuMobile />
@@ -63,7 +63,7 @@ export class ProductDetailPage extends Component {
           <ProductDetails
             product={this.state.product}
             user={user}
-            setCart={this.setCart}
+            // setCart={this.setCart}
           />
 
           <div className="Desktop">

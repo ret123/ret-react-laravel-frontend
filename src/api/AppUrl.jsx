@@ -48,6 +48,18 @@ class AppUrl {
   static ResetPassword = this.BaseUrl + "/reset";
 
   static AddToCart = this.BaseUrl + "/addtocart";
+
+  static CartCount(email) {
+    return this.BaseUrl + "/cartcount/" + email;
+  }
+
+  static AddFavourite(product_code, email) {
+    return this.BaseUrl + "/favourite/" + product_code + "/" + email;
+  }
+
+  static FavoutriteList(email) {
+    return this.BaseUrl + "/favouritelist/" + email;
+  }
 }
 
 export default AppUrl;

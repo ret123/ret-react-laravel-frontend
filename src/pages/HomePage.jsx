@@ -26,7 +26,7 @@ export class HomePage extends Component {
     return (
       <Fragment>
         <div className="Desktop">
-          <NavMenuDesktop />
+          <NavMenuDesktop user={this.props.user} />
           <TopSection />
         </div>
         <div className="Mobile">
